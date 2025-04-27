@@ -1,0 +1,27 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.Write("Ingresa un número: ");
+            if (!int.TryParse(Console.ReadLine(), out int numero))
+            {
+                Console.WriteLine("\n❌ Entrada inválida. Presiona una tecla para intentar de nuevo...");
+                Console.ReadKey();
+                continue;
+            }
+
+            Console.WriteLine($"\n✅ El número {numero} es {(numero % 2 == 0 ? "PAR" : "IMPAR")}.");
+
+            Console.Write("\n¿Deseas ingresar otro número? (s = sí / cualquier otra tecla = no): ");
+            if (Console.ReadLine().Trim().ToLower() != "s")
+                break;
+        }
+
+        Console.WriteLine("\nPrograma finalizado. ¡Hasta luego!");
+    }
+}
