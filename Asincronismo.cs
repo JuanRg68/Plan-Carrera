@@ -1,34 +1,44 @@
-using System;
+    using System;
 using System.Threading.Tasks;
 
-class AsyncDemo
+namespace EjemploAsincronismo
 {
-    static async Task Main()
+    class Program
     {
-        do
+        static async Task Main()
         {
-            Console.Clear();
-            Console.WriteLine("Tarea iniciada...");
-            await SimularTareaLarga();
-            Console.WriteLine("Tarea finalizada.");
-        } while (DeseaRepetir());
-    }
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("Inicio del programa.");
 
-    static async Task SimularTareaLarga()
-    {
-        await Task.Delay(3000);
-        Console.WriteLine("Procesamiento completado.");
-    }
+                await SimularTareaAsincronica();
 
-    static bool DeseaRepetir()
-    {
-        Console.WriteLine("\n¿Desea repetir? (S/N):");
-        string input = Console.ReadLine()?.Trim().ToUpper();
-        while (input != "S" && input != "N")
-        {
-            Console.WriteLine("Entrada inválida. Ingrese 'S' para sí o 'N' para no:");
-            input = Console.ReadLine()?.Trim().ToUpper();
+                Console.WriteLine("Fin del programa.");
+            } while (DeseaContinuar());
         }
-        return input == "S";
+
+        static async Task SimularTareaAsincronica()
+        {
+            Console.WriteLine("\nTarea en proceso... (esperando 3 segundos)");
+            await Task.Delay(3000); // Simula una tarea asincrónica
+            Console.WriteLine("Tarea completada.");
+        }
+
+        static bool DeseaContinuar()
+        {
+            string respuesta;
+            do
+            {
+                Console.Write("\n¿Desea ejecutar nuevamente? (s/n): ");
+                respuesta = Console.ReadLine().Trim().ToLower();
+
+                if (respuesta == "s") return true;
+                if (respuesta == "n") return false;
+
+                Console.WriteLine("Respuesta no válida. Escriba 's' para sí o 'n' para no.");
+            } while (true);
+        }
     }
 }
+
