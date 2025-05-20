@@ -1,0 +1,93 @@
+using System;
+using System.IO;
+
+namespace RefactorizacionSOLID
+{
+    // === Dominio ===
+    public class Factura
+    {
+        public string Cliente { get; set; }
+        public double Monto { get; set; }
+    }
+
+    // === Lógica de negocio: cálculo de impuestos ===
+    public class CalculadorImpuesto
+    {
+        public double AplicarIVA(double monto)
+        {
+            return monto * 1.19; // 19% de IVA
+        }
+    }
+
+    // === Abstracción para persistencia ===
+    public interface IGuardadorFactura
+    {
+        void Guardar(Factura factura);
+    }
+
+    public class GuardadorEnArchivo : IGuardadorFactura
+    {
+        public void Guardar(Factura factura)
+        {
+            File.WriteAllText("factura.txt", $"Cliente: {factura.Cliente}, Monto: {factura.Monto}");
+            Console.WriteLine("Factura guardada en 'factura.txt'.");
+        }
+    }
+
+    // === Abstracción para notificación ===
+    public interface INotificador
+    {
+        void Enviar(Factura factura);
+    }
+
+    public class NotificadorCorreo : INotificador
+    {
+        public void Enviar(Factura factura)
+        {
+            Console.WriteLine($"Enviando correo a {factura.Cliente}...");
+            Console.WriteLine($"Factura enviada con monto: {factura.Monto}");
+        }
+    }
+
+    // === Orquestador ===
+    class Program
+    {
+        static void Main()
+        {
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("=== EJEMPLO DE REFACTORIZACIÓN CON SOLID ===\n");
+
+                var factura = new Factura
+                {
+                    Cliente = "Andrea Martínez",
+                    Monto = 1500
+                };
+
+                var calculador = new CalculadorImpuesto();
+                factura.Monto = calculador.AplicarIVA(factura.Monto);
+
+                IGuardadorFactura guardador = new GuardadorEnArchivo();
+                guardador.Guardar(factura);
+
+                INotificador notificador = new NotificadorCorreo();
+                notificador.Enviar(factura);
+
+            } while (DeseaRepetir());
+        }
+
+        static bool DeseaRepetir()
+        {
+            string respuesta;
+            do
+            {
+                Console.Write("\n¿Desea ejecutar nuevamente? (s/n): ");
+                respuesta = Console.ReadLine().Trim().ToLower();
+                if (respuesta == "s") return true;
+                if (respuesta == "n") return false;
+                Console.WriteLine("Entrada inválida. Ingrese 's' o 'n'.");
+            } while (true);
+        }
+    }
+}
